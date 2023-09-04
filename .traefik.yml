@@ -1,0 +1,12 @@
+displayName: Cloudflare Zero Trust to Nomad Token
+type: middleware
+# iconPath: .assets/icon.png
+# bannerPath: .assets/banner.png
+
+import: github.com/strigo/traefik-auth-middleware
+
+summary: Exchange Cloudflare's JWT to Nomad Token and injects it as header for seamless Nomad authentication
+
+testData:
+  authMethodName: "auth"
+  nomadEndpoint: "http://localhost:4646"
