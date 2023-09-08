@@ -1,7 +1,6 @@
 package traefik_auth_middleware
 
 import (
-	"fmt"
 	"sync"
 	"time"
 )
@@ -37,7 +36,6 @@ func (c *Cache) ClearExpired() {
 	c.Lock()
 	for k, v := range c.dirty {
 		if v.ExpirationTime.Before(time.Now()) {
-			fmt.Println("deleting")
 			delete(c.dirty, k)
 		}
 	}

@@ -40,8 +40,7 @@ type Plugin struct {
 func New(ctx context.Context, next http.Handler, config *Config, name string) (http.Handler, error) {
 	// Start cache clearing cycle to remove any expired tokens
 	go func() {
-		for {
-			time.Sleep(CACHE_CLEAR_CYCLE_HRS * time.Hour)
+		for range time.Tick(CACHE_CLEAR_CYCLE_HRS * time.Hour) {
 			tokenCache.ClearExpired()
 		}
 	}()
@@ -59,7 +58,7 @@ func New(ctx context.Context, next http.Handler, config *Config, name string) (h
 func (p *Plugin) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
 	cfjwt := req.Header.Get(CF_HEADER)
 	if cfjwt == "" {
-		p.logger.Println("No Cf-Access-Jwt-Assertion header found")
+		p.logger.Printf("Header %v not found\n", CF_HEADER)
 		p.next.ServeHTTP(rw, req)
 		return
 	}
