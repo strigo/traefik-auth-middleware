@@ -63,10 +63,16 @@ func (p *Plugin) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
 		return
 	}
 
+	if req.Header.Get(NOMAD_HEADER) != "" {
+		p.logger.Printf("Existing %v header already set - skipping\n", NOMAD_HEADER)
+		p.next.ServeHTTP(rw, req)
+		return
+	}
+
 	// Check if token already cached and valid. If not, reach out to Nomad to
 	// get a new one and cache it.
 	token, ok := tokenCache.Get(cfjwt)
-	if !ok || time.Now().UTC().After(token.ExpirationTime) {
+	if !ok || time.Now().After(token.ExpirationTime) {
 		var err error
 
 		p.logger.Println("Assertion not cached - connecting to Nomad")
